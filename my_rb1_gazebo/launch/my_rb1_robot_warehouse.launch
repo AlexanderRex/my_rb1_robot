@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<launch>
+
+    <!-- Load the URDF into the ROS Parameter Server -->
+    <param name="robot_description" command="cat '$(find my_rb1_description)/urdf/my_rb1_robot.urdf'" />
+
+    <!-- Define starting position arguments -->
+    <arg name="x" default="-0.45"/>
+    <arg name="y" default="-1.4"/>
+    <arg name="z" default="0.5"/>
+
+    <!-- Launch an empty warehouse Gazebo world -->
+    <include file="$(find my_rb1_gazebo)/launch/empty_warehouse.launch"/>
+
+    <!-- Spawn your RB1 robot into the Gazebo world -->
+    <node name="rb1_spawn" pkg="gazebo_ros" type="spawn_model" output="screen"
+          args="-urdf -param robot_description -model rb1_robot -x $(arg x) -y $(arg y) -z $(arg z)" />
+
+    <!-- Launch the joint_state_publisher. This can be useful if your robot model has any controllable joints. -->
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+        <param name="use_gui" value="false"/>
+    </node>
+
+    <!-- Launch the robot_state_publisher to transform the state of your robot into TF messages -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+
+</launch>
