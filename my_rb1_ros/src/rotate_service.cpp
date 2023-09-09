@@ -23,16 +23,19 @@ bool rotateCallback(my_rb1_ros::Rotate::Request &req,
   if (target_yaw > M_PI)
     target_yaw -= 2 * M_PI; // Normalize the angle
 
+  const double kP = 0.5; // Proportional gain
   ros::Rate rate(10);
   while (ros::ok()) {
     // Calculate rotation angle error
     double error_yaw = target_yaw - current_yaw;
-    if (fabs(error_yaw) < 0.01)
-      break; // Stop if the target is reached
+
+    // Stop if the target is reached
+    if (fabs(error_yaw) < 0.01) {
+      break;
+    }
 
     geometry_msgs::Twist twist;
-    twist.angular.z =
-        error_yaw > 0 ? 0.1 : -0.1; // Simple controller using ternary operator
+    twist.angular.z = kP * error_yaw; // Proportional controller
     vel_pub.publish(twist);
 
     ros::spinOnce();
