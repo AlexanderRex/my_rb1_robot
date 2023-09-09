@@ -1,0 +1,3 @@
+<launch>
+  <node name="rotation_server" pkg="my_rb1_ros" type="rotate_service" output="screen" />
+</launch>
